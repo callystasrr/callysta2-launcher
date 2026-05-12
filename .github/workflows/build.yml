@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: windows-latest
@@ -21,12 +24,9 @@ jobs:
         run: pip install pyinstaller
 
       - name: EXE derle
-        run: |
-          pyinstaller --onefile --windowed --name "Callysta2Launcher" `
-            --add-data "." . `
-            launcher.py
+        run: pyinstaller --onefile --windowed --name "Callysta2Launcher" launcher.py
 
-      - name: EXE'yi yükle (artifact)
+      - name: EXE yükle
         uses: actions/upload-artifact@v4
         with:
           name: Callysta2Launcher
@@ -35,13 +35,15 @@ jobs:
       - name: Release oluştur
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: launcher-latest
-          name: "Callysta2 Launcher"
+          tag_name: v1.0.${{ github.run_number }}
+          name: "Callysta2 Launcher v1.0.${{ github.run_number }}"
           files: dist/Callysta2Launcher.exe
           body: |
             ## Callysta2 Launcher
-            1. Bu dosyayı indir
+            1. Callysta2Launcher.exe indir
             2. Çalıştır
-            3. Oyna!
+            3. Gameforge Metin2 klasörünü seç
+            4. "Sunucuya Bağla" butonuna bas
+            5. Oyna!
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
