@@ -1,0 +1,47 @@
+name: Build Callysta2 Launcher EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: PyInstaller kur
+        run: pip install pyinstaller
+
+      - name: EXE derle
+        run: |
+          pyinstaller --onefile --windowed --name "Callysta2Launcher" `
+            --add-data "." . `
+            launcher.py
+
+      - name: EXE'yi yükle (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Callysta2Launcher
+          path: dist/Callysta2Launcher.exe
+
+      - name: Release oluştur
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: launcher-latest
+          name: "Callysta2 Launcher"
+          files: dist/Callysta2Launcher.exe
+          body: |
+            ## Callysta2 Launcher
+            1. Bu dosyayı indir
+            2. Çalıştır
+            3. Oyna!
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
