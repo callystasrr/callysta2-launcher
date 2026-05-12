@@ -1,4 +1,4 @@
-name: Build Callysta2 Launcher EXE
+name: Build ve Release
 
 on:
   push:
@@ -12,11 +12,9 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Python kur
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -26,24 +24,21 @@ jobs:
       - name: EXE derle
         run: pyinstaller --onefile --windowed --name "Callysta2Launcher" launcher.py
 
-      - name: EXE yükle
-        uses: actions/upload-artifact@v4
-        with:
-          name: Callysta2Launcher
-          path: dist/Callysta2Launcher.exe
-
-      - name: Release oluştur
+      - name: Release oluştur (EXE + Client Parçaları)
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.${{ github.run_number }}
-          name: "Callysta2 Launcher v1.0.${{ github.run_number }}"
-          files: dist/Callysta2Launcher.exe
+          name: "Callysta2 v1.0.${{ github.run_number }}"
+          files: |
+            dist/Callysta2Launcher.exe
+            client_parts/Callysta2Client.zip.part01
+            client_parts/Callysta2Client.zip.part02
+            client_parts/Callysta2Client.zip.part03
+            client_parts/Callysta2Client.zip.part04
+            client_parts/Callysta2Client.zip.part05
           body: |
-            ## Callysta2 Launcher
-            1. Callysta2Launcher.exe indir
-            2. Çalıştır
-            3. Gameforge Metin2 klasörünü seç
-            4. "Sunucuya Bağla" butonuna bas
-            5. Oyna!
+            ## ⚔ Callysta2 Launcher
+            **Callysta2Launcher.exe** dosyasını indir ve çalıştır.
+            Geri kalan her şeyi otomatik yapar!
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
